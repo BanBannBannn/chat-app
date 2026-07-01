@@ -62,19 +62,22 @@ export default async function RoomPage({
       .from("messages")
       .select("*")
       .eq("room_id", roomId)
-      .order("created_at", { ascending: true })
+      .order("created_at", { ascending: false })
       .limit(300),
   ]);
 
   const memberIds = (memberRows ?? []).map((row) => row.user_id);
   const { data: members } = await supabase.from("profiles").select("*").in("id", memberIds);
+  
+  // Lấy 300 tin nhắn mới nhất, sau đó đảo ngược lại để hiển thị từ trên xuống (cũ -> mới)
+  const sortedMessages = (messages ?? []).reverse();
 
   return (
     <ChatWindow
       currentUserId={user.id}
       room={room}
       initialMembers={members ?? []}
-      initialMessages={messages ?? []}
+      initialMessages={sortedMessages}
     />
   );
 }

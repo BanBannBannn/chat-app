@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
 import type { RealtimeChannel, RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/client";
@@ -12,6 +13,7 @@ import type { Message } from "@/types/database.types";
  * theo room_id), ai đang online trong phòng (Presence), ai đang gõ (Broadcast).
  */
 export function useChatRealtime(currentUserId: string | null, roomId: string | null) {
+  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
@@ -57,6 +59,10 @@ export function useChatRealtime(currentUserId: string | null, roomId: string | n
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           await channel.track({ online_at: new Date().toISOString() });
+          // Khi kết nối lại sau khi bị rớt mạng/chuyển tab, có thể đã bị lỡ mất
+          // một số tin nhắn Realtime. Gọi router.refresh() để Server Component
+          // fetch lại dữ liệu mới nhất.
+          router.refresh();
         }
       });
 
@@ -66,7 +72,7 @@ export function useChatRealtime(currentUserId: string | null, roomId: string | n
       supabase.removeChannel(channel);
       channelRef.current = null;
     };
-  }, [currentUserId, roomId, supabase, addMessage, setOnlineIds, setTyping]);
+  }, [currentUserId, roomId, supabase, addMessage, setOnlineIds, setTyping, router]);
 
   const sendTyping = useCallback(
     (isTyping: boolean) => {
