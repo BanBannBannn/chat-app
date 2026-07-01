@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { LogOut, Monitor, Moon, Sun } from "lucide-react";
+import { LogOut, Monitor, Moon, Sun, SmartphoneNfc } from "lucide-react";
+import { toast } from "sonner";
 
 import { createClient } from "@/lib/supabase/client";
 import { cn, formatMessageTime, getInitials, getMessagePreviewText } from "@/lib/utils";
@@ -16,9 +17,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { CreateRoomDialog } from "@/components/chat/create-room-dialog";
 import { JoinRoomDialog } from "@/components/chat/join-room-dialog";
+import { LockSettingsDialog } from "@/components/chat/lock-settings-dialog";
 
 export function RoomSidebar({
   currentUserId,
@@ -38,6 +41,12 @@ export function RoomSidebar({
     router.refresh();
   }
 
+  async function handleLogoutOthers() {
+    const supabase = createClient();
+    await supabase.auth.signOut({ scope: 'others' });
+    toast.success("Đã đăng xuất khỏi các thiết bị khác");
+  }
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
@@ -53,23 +62,28 @@ export function RoomSidebar({
         <div className="flex items-center gap-0.5">
           <CreateRoomDialog />
           <JoinRoomDialog />
+          <LockSettingsDialog />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon-sm" aria-label="Đổi giao diện">
+              <Button variant="ghost" size="icon-sm" aria-label="Cài đặt khác">
                 <Sun className="scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
                 <Moon className="absolute scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => setTheme("light")}>
-                <Sun /> Sáng
+                <Sun className="mr-2 size-4" /> Sáng
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("dark")}>
-                <Moon /> Tối
+                <Moon className="mr-2 size-4" /> Tối
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("system")}>
-                <Monitor /> Theo hệ thống
+                <Monitor className="mr-2 size-4" /> Theo hệ thống
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogoutOthers}>
+                <SmartphoneNfc className="mr-2 size-4" /> Đăng xuất thiết bị khác
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

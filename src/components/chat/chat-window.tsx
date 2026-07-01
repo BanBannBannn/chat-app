@@ -41,13 +41,22 @@ export function ChatWindow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room.id, currentUserId]);
 
-  // Đồng bộ thêm khi danh sách thành viên server trả về thay đổi (vd. sau khi
-  // chủ phòng duyệt 1 yêu cầu và gọi router.refresh()) — không reset toàn bộ
+  // Đồng bộ thêm khi danh sách thành viên hoặc tin nhắn server trả về thay đổi
+  // (vd. sau khi chủ phòng duyệt 1 yêu cầu và gọi router.refresh(), hoặc khi
+  // server trả về tin nhắn mới do Next.js tự động refresh) — không reset toàn bộ
   // store, chỉ merge thêm vào, để không mất tin nhắn/online state đang có.
   useEffect(() => {
     for (const member of initialMembers) upsertProfile(member);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialMembers]);
+
+  useEffect(() => {
+    // Merge tin nhắn mới từ server vào store (store đã tự kiểm tra trùng lặp id)
+    for (const msg of initialMessages) {
+      useChatStore.getState().addMessage(msg);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialMessages]);
 
   const { sendTyping } = useChatRealtime(currentUserId, room.id);
 

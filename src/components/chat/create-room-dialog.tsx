@@ -40,6 +40,8 @@ export function CreateRoomDialog() {
   }
 
   async function handleCreate() {
+    if (isLoading) return;
+    
     const trimmed = name.trim();
     if (!trimmed) return;
 
