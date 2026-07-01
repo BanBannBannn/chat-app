@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* -------------------------------------------------------------------------
+   Design tokens — "Warm Ember" palette (pastel peach / coral / rose)
+   Light mode = soft linen & cream with coral accents.
+   Dark mode   = warm espresso brown (never pure black) with brighter coral.
+   ---------------------------------------------------------------------- */
+
+:root {
+  --radius: 1rem;
+
+  --background: #fff8f2;
+  --foreground: #4a3b35;
+
+  --card: #ffffff;
+  --card-foreground: #4a3b35;
+
+  --popover: #ffffff;
+  --popover-foreground: #4a3b35;
+
+  --primary: #fb7c57;
+  --primary-foreground: #fffaf7;
+
+  --secondary: #fde6ee;
+  --secondary-foreground: #9d2f56;
+
+  --muted: #fff1e6;
+  --muted-foreground: #8c7a72;
+
+  --accent: #ffd9c2;
+  --accent-foreground: #4a3b35;
+
+  --destructive: #e0556b;
+  --destructive-foreground: #fffaf7;
+
+  --border: #ffe1cd;
+  --input: #ffe3d1;
+  --ring: #fb7c57;
+
+  --bubble-own-from: #ffb199;
+  --bubble-own-to: #fb7c57;
+  --bubble-own-foreground: #fffaf7;
+
+  --bubble-other: #fff1e6;
+  --bubble-other-foreground: #4a3b35;
+  --bubble-other-border: #ffe1cd;
+
+  --online-dot: #57c98a;
+}
+
+.dark {
+  --background: #1d1411;
+  --foreground: #f5e6dd;
+
+  --card: #271c18;
+  --card-foreground: #f5e6dd;
+
+  --popover: #271c18;
+  --popover-foreground: #f5e6dd;
+
+  --primary: #ff9a76;
+  --primary-foreground: #2a1208;
+
+  --secondary: #3a2230;
+  --secondary-foreground: #f5c3da;
+
+  --muted: #2f2320;
+  --muted-foreground: #b8a398;
+
+  --accent: #3a2922;
+  --accent-foreground: #f5e6dd;
+
+  --destructive: #ff6b81;
+  --destructive-foreground: #2a1208;
+
+  --border: #3d2c25;
+  --input: #392923;
+  --ring: #ff9a76;
+
+  --bubble-own-from: #ff9a76;
+  --bubble-own-to: #f2667a;
+  --bubble-own-foreground: #fff7f4;
+
+  --bubble-other: #2f2320;
+  --bubble-other-foreground: #f5e6dd;
+  --bubble-other-border: #3d2c25;
+
+  --online-dot: #6bdba0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-bubble-own-from: var(--bubble-own-from);
+  --color-bubble-own-to: var(--bubble-own-to);
+  --color-bubble-own-foreground: var(--bubble-own-foreground);
+  --color-bubble-other: var(--bubble-other);
+  --color-bubble-other-foreground: var(--bubble-other-foreground);
+  --color-bubble-other-border: var(--bubble-other-border);
+  --color-online-dot: var(--online-dot);
+
+  --font-display: var(--font-quicksand);
+  --font-sans: var(--font-inter);
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+/* Thin, warm-toned scrollbar for the message list */
+.scroll-warm::-webkit-scrollbar {
+  width: 8px;
+}
+.scroll-warm::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-warm::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 999px;
+}
+.dark .scroll-warm::-webkit-scrollbar-thumb {
+  background-color: var(--accent);
+}
+
+/* Message arrival animation */
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-message-in {
+  animation: message-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Typing indicator dots */
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+.typing-dot {
+  animation: typing-bounce 1.1s ease-in-out infinite;
+}
+
+/* Gentle breathing glow for the online status dot */
+@keyframes pulse-soft {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--online-dot) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--online-dot) 20%, transparent);
+  }
+}
+.pulse-online {
+  animation: pulse-soft 2.4s ease-in-out infinite;
+}
+
+/* Sticker tray hover bounce */
+@keyframes sticker-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1.08) rotate(0deg);
+  }
+}
+.sticker-tile:hover {
+  animation: sticker-pop 0.35s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-message-in,
+  .typing-dot,
+  .pulse-online,
+  .sticker-tile:hover {
+    animation: none !important;
+  }
+}
